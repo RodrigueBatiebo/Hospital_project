@@ -7,7 +7,7 @@
     <title>@yield('title','Students CRUD')</title>
     @vite(['resources/sass/app.scss','resources/js/app.js'])
 </head>
-<body class="bg-dark">
+<body class="bg-white">
     <div id="app">
         <main class="py-4">
             @yield('content')

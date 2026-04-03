@@ -23,6 +23,16 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
+        // Vérifier si l'utilisateur existe
+        $user = \App\Models\User::where('email', $request->email)->first();
+
+        if (!$user) {
+            // Retourner un message d'erreur si aucun compte n'est trouvé
+            return back()->withErrors([
+                'email' => "Vous n'avez pas de compte. Veuillez vous inscrire."
+            ])->withInput();
+        }
+
         // Tentative de connexion
         if (Auth::attempt([
             'email'    => $request->email,
@@ -33,7 +43,7 @@ class AuthController extends Controller
 
             // Redirection selon le rôle
             if ($user->isAdmin()) {
-                return redirect()->route('admin.dashboard');
+                return redirect()->route('admin.index');
             } elseif ($user->isMedecin()) {
                 return redirect()->route('medecin.dashboard');
             } elseif ($user->isSecretaire()) {
@@ -43,15 +53,15 @@ class AuthController extends Controller
             }
         }
 
-        // Echec de connexion
-        return back()->withErrors([
-            'email' => 'Email ou mot de passe incorrect.',
-        ]);
+        // Si l'utilisateur existe mais le mot de passe est incorrect
+    return back()->withErrors([
+        'password' => 'Mot de passe incorrect.'
+    ])->withInput();
     }
 
     // ── Afficher le formulaire d'inscription ─────────────────────────
     public function showRegister() {
-        return view('auth.register');
+        return view('auth.inscription');
     }
 
     // ── Traiter l'inscription ────────────────────────────────────────
@@ -87,7 +97,7 @@ class AuthController extends Controller
         // Connecter automatiquement après inscription
         Auth::login($user);
 
-        return redirect()->route('patient.dashboard');
+        return redirect()->route('patient.index');
     }
 
     // ── Déconnexion ──────────────────────────────────────────────────

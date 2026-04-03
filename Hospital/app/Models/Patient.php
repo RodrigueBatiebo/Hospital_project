@@ -14,9 +14,9 @@ class Patient extends User
         'adresse',
     ];
         // Récupère le compte User associé à ce patient s'il n'y avait as d'heritage
-    /*public function user() {
+    public function user() {
         return $this->belongsTo(User::class, 'id_user');
-    }*/
+    }
 
     // Un patient peut avoir plusieurs rendez-vous
     public function rendezVous() {

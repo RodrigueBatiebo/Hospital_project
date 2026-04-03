@@ -10,17 +10,25 @@ class SecretaireController extends Controller
 {
     // ── Afficher le dashboard secrétaire ─────────────────────────────
     public function dashboard() {
+        
         /** @var \App\Models\User $user */
         $user = Auth::user();
         $secretaire = $user->secretaire;
 
         // Récupérer les rendez-vous du service de la secrétaire
-        $rendezVous = RendezVous::where('id_service', $secretaire->id_service)
+        $rendezvous = RendezVous::where('id_service', $secretaire->id_service)
             ->where('statut', 'en_attente')
             ->orderBy('date', 'asc')
-            ->get();
-
-        return view('secretaire.dashboard', compact('rendezVous'));
+            ->paginate(5);
+            $stats = [
+        'en_attente' => $rendezvous->where('statut', 'en_attente')->count(),
+        'valide'     => $rendezvous->where('statut', 'valide')->count(),
+        'refuse'     => $rendezvous->where('statut', 'refuse')->count(),
+        'total'      => $rendezvous->count(),
+            ];
+        
+         
+        return view('secretaire.dashboard', compact('rendezvous','stats'));
     }
 
     // ── Afficher tous les rendez-vous du service ──────────────────────
@@ -32,8 +40,9 @@ class SecretaireController extends Controller
         $rendezVous = RendezVous::where('id_service', $secretaire->id_service)
             ->orderBy('date', 'asc')
             ->get();
+        
 
-        return view('secretaire.rendezvous.index', compact('rendezVous'));
+        return view('secretaire.rendezvous.form', compact('rendezVous'));
     }
 
     // ── Valider un rendez-vous ────────────────────────────────────────

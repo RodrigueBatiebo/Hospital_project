@@ -13,6 +13,12 @@ class Medecin extends User
         'specialite',
         'numero_ordre',
     ];
+    
+    // Récupère le compte User associé à ce medecin s'il n'y avait as d'heritage
+    public function user() {
+        return $this->belongsTo(User::class, 'id_user');
+    }
+
 
      // Un médecin peut avoir plusieurs rendez-vous
     public function rendezVous() {
